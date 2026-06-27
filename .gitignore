@@ -1,0 +1,24 @@
+# Home Assistant Secrets
+secrets.yaml
+
+# Storage files (contains tokens and sensitive data)
+.storage/
+storage/
+
+# HACS local data
+custom_components/hacs/gh-token
+custom_components/hacs/.storage/
+
+# Ignore log files and temporary data
+home-assistant.log
+home-assistant.log.*
+*.db
+*.db-shm
+*.db-wal
+
+
+*.pyc
+custom_components/hacs/hacs_frontend/
+custom_components/hacs/utils/__pycache__/
+custom_components/midea_ac_lan/
+

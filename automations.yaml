@@ -1,0 +1,85 @@
+- id: '1769292242921'
+  alias: LG Vol Dn
+  description: ''
+  triggers:
+  - trigger: time
+    at: 01:00:00
+  conditions: []
+  actions:
+  - action: webostv.button
+    metadata: {}
+    data:
+      entity_id: media_player.lg_webos_tv_oled65c54la
+      button: VOLUMEDOWN
+  mode: single
+- id: '1769292612460'
+  alias: LG Power Off
+  description: ''
+  triggers:
+  - trigger: time
+    at: 01:30:00
+    weekday:
+    - thu
+    - wed
+    - fri
+    - sat
+    - tue
+    - mon
+    - sun
+  - trigger: time
+    at: 02:00:00
+  - trigger: time
+    at: 02:00:00
+  - trigger: time
+    at: 03:00:00
+  conditions: []
+  actions:
+  - action: webostv.command
+    metadata: {}
+    data:
+      entity_id: media_player.lg_webos_tv_oled65c54la
+      command: POWER_OFF
+  mode: single
+
+- id: '1769292243001'
+  alias: "Sterowanie zaworem przez przycisk"
+  trigger:
+    - platform: state
+      entity_id: sensor.akcja_przycisk
+  action:
+    - choose:
+        # 1. Pojedynczy klik: Zawsze zamyka zawór (bezpieczeństwo)
+        - conditions:
+            - condition: state
+              entity_id: sensor.akcja_przycisk
+              state: "single_click"
+          sequence:
+            - service: switch.turn_off
+              target:
+                entity_id: switch.zawor_wody_stan
+
+        # 2. Podwójny klik: Przełącza zawór (ON -> OFF lub OFF -> ON)
+        - conditions:
+            - condition: state
+              entity_id: sensor.akcja_przycisk
+              state: "double_click"
+          sequence:
+            - service: switch.toggle
+              target:
+                entity_id: switch.zawor_wody_stan
+
+- id: 'auto_off_valve'
+  alias: "Auto-wyłączenie zaworu wody po 15 minutach"
+  description: "Automatycznie wyłącza zawór wody po 15 minutach od włączenia — niezależnie od tego, co go włączyło."
+  triggers:
+    - trigger: state
+      entity_id: switch.zawor_wody_stan
+      to: "on"
+  conditions: []
+  actions:
+    - delay:
+        minutes: 15
+    - action: switch.turn_off
+      target:
+        entity_id: switch.zawor_wody_stan
+  mode: restart

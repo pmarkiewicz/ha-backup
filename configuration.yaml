@@ -1,0 +1,150 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+
+
+mqtt:
+  sensor:
+    - name: "Temperatura Ogrod"
+      state_topic: "tele/tasmota_gateway/SENSOR"
+      value_template: >
+        {% if value_json.ZbReceived['0xFC52'].Temperature is defined %}
+          {{ value_json.ZbReceived['0xFC52'].Temperature }}
+        {% else %}
+          {{ none }}
+        {% endif %}
+      unit_of_measurement: "°C"
+      device_class: "temperature"
+      state_class: "measurement"
+
+    - name: "Wilgotność Ogrod"
+      state_topic: "tele/tasmota_gateway/SENSOR"
+      value_template: >
+        {% if value_json.ZbReceived['0xFC52'].Humidity is defined %}
+          {{ value_json.ZbReceived['0xFC52'].Humidity }}
+        {% else %}
+          {{ none }}
+        {% endif %}
+      unit_of_measurement: "%"
+      device_class: "humidity"
+      state_class: "measurement"
+
+    - name: "Temperatura Taras"
+      state_topic: "tele/tasmota_gateway/SENSOR"
+      value_template: >
+        {% if value_json.ZbReceived['0x0B22'].Temperature is defined %}
+          {{ value_json.ZbReceived['0x0B22'].Temperature }}
+        {% else %}
+          {{ none }}
+        {% endif %}
+      unit_of_measurement: "°C"
+      device_class: "temperature"
+      state_class: "measurement"
+
+    - name: "Wilgotność Taras"
+      state_topic: "tele/tasmota_gateway/SENSOR"
+      value_template: >
+        {% if value_json.ZbReceived['0x0B22'].Humidity is defined %}
+          {{ value_json.ZbReceived['0x0B22'].Humidity }}
+        {% else %}
+          {{ none }}
+        {% endif %}
+      unit_of_measurement: "%"
+      device_class: "humidity"
+      state_class: "measurement"
+
+    - name: "Temperatura Piotr"
+      state_topic: "tele/tasmota_gateway/SENSOR"
+      value_template: >
+        {% if value_json.ZbReceived['0x5560'].Temperature is defined %}
+          {{ value_json.ZbReceived['0x5560'].Temperature }}
+        {% else %}
+          {{ none }}
+        {% endif %}
+      unit_of_measurement: "°C"
+      device_class: "temperature"
+      state_class: "measurement"
+
+    - name: "Wilgotność Piotr"
+      state_topic: "tele/tasmota_gateway/SENSOR"
+      value_template: >
+        {% if value_json.ZbReceived['0x5560'].Humidity is defined %}
+          {{ value_json.ZbReceived['0x5560'].Humidity }}
+        {% else %}
+          {{ none }}
+        {% endif %}
+      unit_of_measurement: "%"
+      device_class: "humidity"
+      state_class: "measurement"
+
+    - name: "Akcja Przycisk"
+      state_topic: "tele/tasmota_gateway/SENSOR"
+      value_template: >
+        {% if value_json.ZbReceived['0xB3FC'] is defined %}
+          {% if value_json.ZbReceived['0xB3FC']['0006!01'] is defined %}
+            double_click
+          {% elif value_json.ZbReceived['0xB3FC']['0006!02'] is defined %}
+            single_click
+          {% else %}
+            unknown
+          {% endif %}
+        {% else %}
+          {{ states('sensor.akcja_przycisk') }}
+        {% endif %}
+
+    - name: "Zawór Wody - Bateria"
+      state_topic: "tele/tasmota_gateway/SENSOR"
+      unit_of_measurement: "%"
+      device_class: battery
+      value_template: "{{ value_json.ZbReceived['0xC227'].BatteryPercentage }}"
+      availability_topic: "tele/tasmota_gateway/LWT" # Opcjonalnie, jeśli używasz LWT
+
+  switch:
+  
+    - name: "Relay bedroom"
+      command_topic: "cmnd/tasmota_gateway/ZbSend"
+      state_topic: "tele/tasmota_gateway/SENSOR"
+      payload_on: '{"device":"0x38D7","send":{"Power":1}}'
+      payload_off: '{"device":"0x38D7","send":{"Power":0}}'
+      value_template: >
+        {% if value_json.ZbReceived['0x38D7'] is defined %}
+          {% if value_json.ZbReceived['0x38D7'].Power == 1 %} ON {% else %} OFF {% endif %}
+        {% else %}
+          {{ states('switch.gniazdko_socket_1') }}
+        {% endif %}
+      optimistic: false
+      retain: false
+
+    - name: "Relay Zosia"
+      command_topic: "cmnd/tasmota_gateway/ZbSend"
+      state_topic: "tele/tasmota_gateway/SENSOR"
+      payload_on: '{"device":"0x7679","send":{"Power":1}}'
+      payload_off: '{"device":"0x7679","send":{"Power":0}}'
+      value_template: >
+        {% if value_json.ZbReceived['0x7679'] is defined %}
+          {% if value_json.ZbReceived['0x7679'].Power == 1 %} ON {% else %} OFF {% endif %}
+        {% else %}
+          {{ states('switch.gniazdko_socket_1') }}
+        {% endif %}
+      optimistic: false
+      retain: false
+
+    - name: "Zawór Wody - Stan"
+      command_topic: "cmnd/tasmota_gateway/ZbSend"
+      state_topic: "tele/tasmota_gateway/SENSOR"
+      payload_on: '{"device":"0xC227","send":{"Power":1}}'
+      payload_off: '{"device":"0xC227","send":{"Power":0}}'
+      value_template: "{{ 'ON' if value_json.ZbReceived['0xC227'].Power == 1 else 'OFF' }}"
+      # Opcje dostępności muszą być wcięte pod 'name' (czyli wewnątrz przełącznika):
+      availability_topic: "tele/tasmota_gateway/LWT"
+      payload_available: "Online"
+      payload_not_available: "Offline"
+      optimistic: false
