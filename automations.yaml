@@ -65,16 +65,21 @@
           entity_id: switch.zawor_wody_stan
 - id: auto_off_valve
   alias: Auto-wyłączenie zaworu wody po 15 minutach
-  description: Automatycznie wyłącza zawór wody po 15 minutach od włączenia — niezależnie
-    od tego, co go włączyło.
+  description: Automatycznie wyłącza zawór wody po 15 minutach od włączenia.
   triggers:
   - trigger: state
     entity_id: switch.zawor_wody_stan
     to: 'on'
-  conditions: []
   actions:
-  - delay:
+  - wait_for_trigger:
+    - trigger: state
+      entity_id: switch.zawor_wody_stan
+      to: 'off'
+      for:
+        minutes: 15
+    timeout:
       minutes: 15
+    continue_on_timeout: true
   - action: switch.turn_off
     target:
       entity_id: switch.zawor_wody_stan
