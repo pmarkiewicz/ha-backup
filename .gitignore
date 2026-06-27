@@ -22,3 +22,4 @@ custom_components/hacs/hacs_frontend/
 custom_components/hacs/utils/__pycache__/
 custom_components/midea_ac_lan/
 
+.ha_run.lock
