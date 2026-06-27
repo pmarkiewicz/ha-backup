@@ -40,61 +40,57 @@
       entity_id: media_player.lg_webos_tv_oled65c54la
       command: POWER_OFF
   mode: single
-
 - id: '1769292243001'
-  alias: "Sterowanie zaworem przez przycisk"
+  alias: Sterowanie zaworem przez przycisk
   trigger:
-    - platform: state
-      entity_id: sensor.akcja_przycisk
+  - platform: state
+    entity_id: sensor.akcja_przycisk
   action:
-    - choose:
-        # 1. Pojedynczy klik: Zawsze zamyka zawór (bezpieczeństwo)
-        - conditions:
-            - condition: state
-              entity_id: sensor.akcja_przycisk
-              state: "single_click"
-          sequence:
-            - service: switch.turn_off
-              target:
-                entity_id: switch.zawor_wody_stan
-
-        # 2. Podwójny klik: Przełącza zawór (ON -> OFF lub OFF -> ON)
-        - conditions:
-            - condition: state
-              entity_id: sensor.akcja_przycisk
-              state: "double_click"
-          sequence:
-            - service: switch.toggle
-              target:
-                entity_id: switch.zawor_wody_stan
-
-- id: 'auto_off_valve'
-  alias: "Auto-wyłączenie zaworu wody po 15 minutach"
-  description: "Automatycznie wyłącza zawór wody po 15 minutach od włączenia — niezależnie od tego, co go włączyło."
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: sensor.akcja_przycisk
+        state: single_click
+      sequence:
+      - service: switch.turn_off
+        target:
+          entity_id: switch.zawor_wody_stan
+    - conditions:
+      - condition: state
+        entity_id: sensor.akcja_przycisk
+        state: double_click
+      sequence:
+      - service: switch.toggle
+        target:
+          entity_id: switch.zawor_wody_stan
+- id: auto_off_valve
+  alias: Auto-wyłączenie zaworu wody po 15 minutach
+  description: Automatycznie wyłącza zawór wody po 15 minutach od włączenia — niezależnie
+    od tego, co go włączyło.
   triggers:
-    - trigger: state
+  - trigger: state
+    entity_id: switch.zawor_wody_stan
+    to: 'on'
+  conditions: []
+  actions:
+  - delay:
+      minutes: 15
+  - action: switch.turn_off
+    target:
       entity_id: switch.zawor_wody_stan
-      to: "on"
-  conditions: []
-  actions:
-    - delay:
-        minutes: 15
-    - action: switch.turn_off
-      target:
-        entity_id: switch.zawor_wody_stan
   mode: restart
-
-- id: 'auto_off_ac_master_bedroom'
-  alias: "Auto-wyłączenie AC Master bedroom o 3:00"
-  description: "Wyłącza klimatyzację w Master bedroom codziennie o 3:00 w nocy"
+- id: auto_off_ac_master_bedroom
+  alias: Auto-wyłączenie AC Master bedroom o 3:00
+  description: Wyłącza klimatyzację w Master bedroom codziennie o 3:00 w nocy
   triggers:
-    - trigger: time
-      at: "03:00:00"
+  - trigger: time
+    at: 03:00:00
   conditions: []
   actions:
-    - action: climate.turn_off
-      metadata: {}
-      data: {}
-      target:
-        entity_id: climate.master_bedroom
+  - action: climate.turn_off
+    metadata: {}
+    data: {}
+    target:
+      entity_id:
+      - climate.153931628541315_climate
   mode: single
