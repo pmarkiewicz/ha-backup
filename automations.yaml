@@ -85,8 +85,8 @@
       entity_id: switch.zawor_wody_stan
   mode: restart
 - id: auto_off_ac_master_bedroom
-  alias: Auto-wyłączenie AC Master bedroom o 3:00
-  description: Wyłącza klimatyzację w Master bedroom codziennie o 3:00 w nocy
+  alias: Auto-wyłączenie AC Master bedroom o 5:00
+  description: Wyłącza klimatyzację w Master bedroom codziennie o 5:00 w nocy
   triggers:
   - trigger: time
     at: 03:00:00
