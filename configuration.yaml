@@ -140,8 +140,8 @@ mqtt:
     - name: "Zawór Wody - Stan"
       command_topic: "cmnd/tasmota_gateway/ZbSend"
       state_topic: "tele/tasmota_gateway/SENSOR"
-      payload_on: '{"device":"0xC227","send":{"Power":1}}'
-      payload_off: '{"device":"0xC227","send":{"Power":0}}'
+      payload_on: '{"device":"0xC227","send":{"Power":0}}'
+      payload_off: '{"device":"0xC227","send":{"Power":1}}'
       value_template: "{{ 'ON' if value_json.ZbReceived['0xC227'].Power == 1 else 'OFF' }}"
       # Opcje dostępności muszą być wcięte pod 'name' (czyli wewnątrz przełącznika):
       availability_topic: "tele/tasmota_gateway/LWT"
