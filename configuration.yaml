@@ -12,6 +12,18 @@ scene: !include scenes.yaml
 
 
 mqtt:
+  binary_sensor:
+    - name: "Okno Sypialnia"
+      state_topic: "tele/tasmota_gateway/SENSOR"
+      value_template: >
+        {% if value_json.ZbReceived['0x776D'].Contact == 1 %}
+          ON
+        {% else %}
+          OFF
+        {% endif %}
+      device_class: window
+      payload_on: "ON"
+      payload_off: "OFF"
   sensor:
     - name: "Temperatura Ogrod"
       state_topic: "tele/tasmota_gateway/SENSOR"
