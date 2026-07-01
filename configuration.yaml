@@ -72,6 +72,7 @@ mqtt:
       unit_of_measurement: "°C"
       device_class: "temperature"
       state_class: "measurement"
+      expire_after: 3600 # Czas w sekundach (86400s = 24 godziny)
 
     - name: "Wilgotność Ogrod"
       state_topic: "tele/tasmota_gateway/SENSOR"
@@ -84,6 +85,7 @@ mqtt:
       unit_of_measurement: "%"
       device_class: "humidity"
       state_class: "measurement"
+      expire_after: 3600 # Czas w sekundach (86400s = 24 godziny)
 
     - name: "Temperatura Taras"
       state_topic: "tele/tasmota_gateway/SENSOR"
@@ -96,6 +98,7 @@ mqtt:
       unit_of_measurement: "°C"
       device_class: "temperature"
       state_class: "measurement"
+      expire_after: 3600 # Czas w sekundach (86400s = 24 godziny)
 
     - name: "Wilgotność Taras"
       state_topic: "tele/tasmota_gateway/SENSOR"
@@ -108,6 +111,7 @@ mqtt:
       unit_of_measurement: "%"
       device_class: "humidity"
       state_class: "measurement"
+      expire_after: 3600 # Czas w sekundach (86400s = 24 godziny)
 
     - name: "Temperatura Strych"
       state_topic: "tele/tasmota_gateway/SENSOR"
@@ -120,6 +124,7 @@ mqtt:
       unit_of_measurement: "°C"
       device_class: "temperature"
       state_class: "measurement"
+      expire_after: 3600 # Czas w sekundach (86400s = 24 godziny)
 
     - name: "Wilgotność Strych"
       state_topic: "tele/tasmota_gateway/SENSOR"
@@ -132,6 +137,7 @@ mqtt:
       unit_of_measurement: "%"
       device_class: "humidity"
       state_class: "measurement"
+      expire_after: 3600 # Czas w sekundach (86400s = 24 godziny)
 
     - name: "Temperatura Piotr"
       state_topic: "tele/tasmota_gateway/SENSOR"
@@ -144,6 +150,7 @@ mqtt:
       unit_of_measurement: "°C"
       device_class: "temperature"
       state_class: "measurement"
+      expire_after: 3600 # Czas w sekundach (86400s = 24 godziny)
 
     - name: "Wilgotność Piotr"
       state_topic: "tele/tasmota_gateway/SENSOR"
@@ -156,6 +163,7 @@ mqtt:
       unit_of_measurement: "%"
       device_class: "humidity"
       state_class: "measurement"
+      expire_after: 3600 # Czas w sekundach (86400s = 24 godziny)
 
     - name: "Akcja Przycisk"
       state_topic: "tele/tasmota_gateway/SENSOR"
@@ -196,7 +204,7 @@ mqtt:
       retain: false
       
     - name: "HEVO"
-      unique_id: "relay_fan_0xEC78"
+      unique_id: "have_0xBF7E"
       command_topic: "cmnd/tasmota_gateway/ZbSend"
       state_topic: "stat/tasmota_gateway/POWER" # Dostosuj do swojego tematu
       payload_on: '{"Device":"0xBF7E","Send":{"Power":1}}'
