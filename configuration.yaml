@@ -25,20 +25,38 @@ mqtt:
       payload_on: "ON"
       payload_off: "OFF"
   sensor:
+    - name: "HEVO power"
+      state_topic: "tele/tasmota_gateway/SENSOR"
+      value_template: "{{ value_json['ZbReceived']['0xBF7E']['ActivePower'] }}"
+      unit_of_measurement: "W"
+      device_class: "power"
+
+    - name: "HEVO volt"
+      state_topic: "tele/tasmota_gateway/SENSOR"
+      value_template: "{{ value_json['ZbReceived']['0xBF7E']['RMSVoltage'] }}"
+      unit_of_measurement: "V"
+      device_class: "voltage"
+
+    - name: "HEVO curr"
+      state_topic: "tele/tasmota_gateway/SENSOR"
+      value_template: "{{ value_json['ZbReceived']['0xBF7E']['RMSCurrent'] / 1000 }}" # Konwersja mA na A
+      unit_of_measurement: "A"
+      device_class: "current"
+      
     - name: "Attic fan power"
-      state_topic: "tele/twoja_tasmota/SENSOR"
+      state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: "{{ value_json['ZbReceived']['0xEC78']['ActivePower'] }}"
       unit_of_measurement: "W"
       device_class: "power"
 
     - name: "Attic fan volt"
-      state_topic: "tele/twoja_tasmota/SENSOR"
+      state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: "{{ value_json['ZbReceived']['0xEC78']['RMSVoltage'] }}"
       unit_of_measurement: "V"
       device_class: "voltage"
 
     - name: "Attic fan curr"
-      state_topic: "tele/twoja_tasmota/SENSOR"
+      state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: "{{ value_json['ZbReceived']['0xEC78']['RMSCurrent'] / 1000 }}" # Konwersja mA na A
       unit_of_measurement: "A"
       device_class: "current"
@@ -164,12 +182,36 @@ mqtt:
   switch:
     - name: "Attic fan"
       unique_id: "relay_fan_0xEC78"
-      state_topic: "stat/twoja_tasmota/POWER" # Dostosuj do swojego tematu
-      command_topic: "cmnd/twoja_tasmota/ZbSend"
-      payload_on: '{"Device":"0xEC78","Send":{"Power":"ON"}}'
-      payload_off: '{"Device":"0xEC78","Send":{"Power":"OFF"}}'
+      command_topic: "cmnd/tasmota_gateway/ZbSend"
+      state_topic: "stat/tasmota_gateway/POWER" # Dostosuj do swojego tematu
+      payload_on: '{"Device":"0xEC78","Send":{"Power":1}}'
+      payload_off: '{"Device":"0xEC78","Send":{"Power":0}}'
+      value_template: >
+        {% if value_json.ZbReceived['0x7679'] is defined %}
+          {% if value_json.ZbReceived['0x7679'].Power == 1 %} ON {% else %} OFF {% endif %}
+        {% else %}
+          {{ states('switch.attic_fan') }}
+        {% endif %}
+      optimistic: false
+      retain: false
+      
+    - name: "HEVO"
+      unique_id: "relay_fan_0xEC78"
+      command_topic: "cmnd/tasmota_gateway/ZbSend"
+      state_topic: "stat/tasmota_gateway/POWER" # Dostosuj do swojego tematu
+      payload_on: '{"Device":"0xBF7E","Send":{"Power":1}}'
+      payload_off: '{"Device":"0xBF7E","Send":{"Power":0}}'
       optimistic: false
       qos: 1
+      value_template: >
+        {% if value_json.ZbReceived['0x7679'] is defined %}
+          {% if value_json.ZbReceived['0x7679'].Power == 1 %} ON {% else %} OFF {% endif %}
+        {% else %}
+          {{ states('switch.hevo') }}
+        {% endif %}
+      optimistic: false
+      retain: false
+      
     - name: "Relay bedroom"
       command_topic: "cmnd/tasmota_gateway/ZbSend"
       state_topic: "tele/tasmota_gateway/SENSOR"
@@ -179,7 +221,7 @@ mqtt:
         {% if value_json.ZbReceived['0x38D7'] is defined %}
           {% if value_json.ZbReceived['0x38D7'].Power == 1 %} ON {% else %} OFF {% endif %}
         {% else %}
-          {{ states('switch.gniazdko_socket_1') }}
+          {{ states('switch.relay_bedroom') }}
         {% endif %}
       optimistic: false
       retain: false
@@ -193,7 +235,7 @@ mqtt:
         {% if value_json.ZbReceived['0x7679'] is defined %}
           {% if value_json.ZbReceived['0x7679'].Power == 1 %} ON {% else %} OFF {% endif %}
         {% else %}
-          {{ states('switch.gniazdko_socket_1') }}
+          {{ states('switch.relay_zosia') }}
         {% endif %}
       optimistic: false
       retain: false
