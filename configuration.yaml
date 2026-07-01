@@ -61,6 +61,30 @@ mqtt:
       device_class: "humidity"
       state_class: "measurement"
 
+    - name: "Temperatura Strych"
+      state_topic: "tele/tasmota_gateway/SENSOR"
+      value_template: >
+        {% if value_json.ZbReceived['0x7B4B'].Temperature is defined %}
+          {{ value_json.ZbReceived['0x7B4B'].Temperature }}
+        {% else %}
+          {{ none }}
+        {% endif %}
+      unit_of_measurement: "°C"
+      device_class: "temperature"
+      state_class: "measurement"
+
+    - name: "Wilgotność Strych"
+      state_topic: "tele/tasmota_gateway/SENSOR"
+      value_template: >
+        {% if value_json.ZbReceived['0x7B4B'].Humidity is defined %}
+          {{ value_json.ZbReceived['0x7B4B'].Humidity }}
+        {% else %}
+          {{ none }}
+        {% endif %}
+      unit_of_measurement: "%"
+      device_class: "humidity"
+      state_class: "measurement"
+
     - name: "Temperatura Piotr"
       state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: >

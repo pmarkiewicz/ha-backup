@@ -73,16 +73,21 @@
   actions:
   - wait_for_trigger:
     - trigger: state
-      entity_id: switch.zawor_wody_stan
-      to: 'off'
+      entity_id:
+      - switch.zawor_wody_stan
+      to:
+      - 'off'
       for:
-        minutes: 15
+        hours: 0
+        minutes: 1
+        seconds: 0
     timeout:
       minutes: 15
     continue_on_timeout: true
   - action: switch.turn_off
     target:
       entity_id: switch.zawor_wody_stan
+    data: {}
   mode: restart
 - id: auto_off_ac_master_bedroom
   alias: Auto-wyłączenie AC Master bedroom o 5:00
