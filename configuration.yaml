@@ -188,7 +188,7 @@ mqtt:
       availability_topic: "tele/tasmota_gateway/LWT" # Opcjonalnie, jeśli używasz LWT
 
   switch:
-- name: "Fountain"
+    - name: "Fountain"
       unique_id: "fountain_0xBC28"
       command_topic: "cmnd/tasmota_gateway/ZbSend"
       state_topic: "stat/tasmota_gateway/POWER" # Dostosuj do swojego tematu
