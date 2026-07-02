@@ -188,6 +188,21 @@ mqtt:
       availability_topic: "tele/tasmota_gateway/LWT" # Opcjonalnie, jeśli używasz LWT
 
   switch:
+- name: "Fountain"
+      unique_id: "fountain_0xBC28"
+      command_topic: "cmnd/tasmota_gateway/ZbSend"
+      state_topic: "stat/tasmota_gateway/POWER" # Dostosuj do swojego tematu
+      payload_on: '{"Device":"0xBC28","Send":{"Power":1}}'
+      payload_off: '{"Device":"0xBC28","Send":{"Power":0}}'
+      value_template: >
+        {% if value_json.ZbReceived['0xBC28'] is defined %}
+          {% if value_json.ZbReceived['0xBC28'].Power == 1 %} ON {% else %} OFF {% endif %}
+        {% else %}
+          {{ states('switch.attic_fan') }}
+        {% endif %}
+      optimistic: false
+      retain: false
+
     - name: "Attic fan"
       unique_id: "relay_fan_0xEC78"
       command_topic: "cmnd/tasmota_gateway/ZbSend"
@@ -195,8 +210,8 @@ mqtt:
       payload_on: '{"Device":"0xEC78","Send":{"Power":1}}'
       payload_off: '{"Device":"0xEC78","Send":{"Power":0}}'
       value_template: >
-        {% if value_json.ZbReceived['0x7679'] is defined %}
-          {% if value_json.ZbReceived['0x7679'].Power == 1 %} ON {% else %} OFF {% endif %}
+        {% if value_json.ZbReceived['0xEC78'] is defined %}
+          {% if value_json.ZbReceived['0xEC78'].Power == 1 %} ON {% else %} OFF {% endif %}
         {% else %}
           {{ states('switch.attic_fan') }}
         {% endif %}
@@ -212,8 +227,8 @@ mqtt:
       optimistic: false
       qos: 1
       value_template: >
-        {% if value_json.ZbReceived['0x7679'] is defined %}
-          {% if value_json.ZbReceived['0x7679'].Power == 1 %} ON {% else %} OFF {% endif %}
+        {% if value_json.ZbReceived['0xBF7E'] is defined %}
+          {% if value_json.ZbReceived['0xBF7E'].Power == 1 %} ON {% else %} OFF {% endif %}
         {% else %}
           {{ states('switch.hevo') }}
         {% endif %}
@@ -259,3 +274,4 @@ mqtt:
       payload_available: "Online"
       payload_not_available: "Offline"
       optimistic: false
+

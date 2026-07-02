@@ -42,27 +42,31 @@
   mode: single
 - id: '1769292243001'
   alias: Sterowanie zaworem przez przycisk
-  trigger:
-  - platform: state
-    entity_id: sensor.akcja_przycisk
-  action:
+  triggers:
+  - entity_id: sensor.akcja_przycisk
+    trigger: state
+  actions:
   - choose:
     - conditions:
       - condition: state
         entity_id: sensor.akcja_przycisk
         state: single_click
       sequence:
-      - service: switch.turn_off
+      - action: switch.toggle
         target:
-          entity_id: switch.zawor_wody_stan
+          entity_id:
+          - switch.zawor_wody_stan
+        data: {}
     - conditions:
       - condition: state
         entity_id: sensor.akcja_przycisk
         state: double_click
       sequence:
-      - service: switch.toggle
+      - action: switch.turn_on
         target:
-          entity_id: switch.zawor_wody_stan
+          entity_id:
+          - switch.zawor_wody_stan
+        data: {}
 - id: auto_off_valve
   alias: Auto-wyłączenie zaworu wody po 15 minutach
   description: Automatycznie wyłącza zawór wody po 15 minutach od włączenia.
@@ -76,7 +80,7 @@
       entity_id:
       - switch.zawor_wody_stan
       to:
-      - 'off'
+      - 'on'
       for:
         hours: 0
         minutes: 1
@@ -84,6 +88,7 @@
     timeout:
       minutes: 15
     continue_on_timeout: true
+    alias: Wait for 15mins
   - action: switch.turn_off
     target:
       entity_id: switch.zawor_wody_stan
@@ -103,4 +108,36 @@
     target:
       entity_id:
       - climate.153931628541315_climate
+  mode: single
+- id: '1782937920893'
+  alias: Attic fan on
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.temperatura_strych
+    above: 31
+  conditions: []
+  actions:
+  - action: switch.turn_on
+    metadata: {}
+    target:
+      entity_id: switch.attic_fan
+    data: {}
+  mode: single
+- id: '1782937976164'
+  alias: Attic fan off
+  description: ''
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.temperatura_strych
+    below: 29
+  conditions: []
+  actions:
+  - action: switch.turn_off
+    metadata: {}
+    target:
+      entity_id: switch.attic_fan
+    data: {}
   mode: single
