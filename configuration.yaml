@@ -148,6 +148,7 @@ mqtt:
       expire_after: 3600 # Czas w sekundach (86400s = 24 godziny)
 
     - name: "Temperatura Piotr"
+      unique_id: temperatura_piotr
       state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: >
         {% set temp = value_json.ZbReceived['0x5560'].Temperature | default(none) %}
