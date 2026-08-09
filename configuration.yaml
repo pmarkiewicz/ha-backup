@@ -34,48 +34,56 @@ mqtt:
       payload_off: "OFF"
   sensor:
     - name: "HEVO power"
+      unique_id: hevo_power
       state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: "{{ value_json['ZbReceived']['0xBF7E']['ActivePower'] }}"
       unit_of_measurement: "W"
       device_class: "power"
 
     - name: "HEVO volt"
+      unique_id: hevo_volt
       state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: "{{ value_json['ZbReceived']['0xBF7E']['RMSVoltage'] }}"
       unit_of_measurement: "V"
       device_class: "voltage"
 
     - name: "HEVO curr"
+      unique_id: hevo_curr
       state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: "{{ value_json['ZbReceived']['0xBF7E']['RMSCurrent'] / 1000 }}" # Konwersja mA na A
       unit_of_measurement: "A"
       device_class: "current"
       
     - name: "Attic fan power"
+      unique_id: attic_fan_power
       state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: "{{ value_json['ZbReceived']['0xEC78']['ActivePower'] }}"
       unit_of_measurement: "W"
       device_class: "power"
 
     - name: "Attic fan volt"
+      unique_id: attic_fan_volt
       state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: "{{ value_json['ZbReceived']['0xEC78']['RMSVoltage'] }}"
       unit_of_measurement: "V"
       device_class: "voltage"
 
     - name: "Attic fan curr"
+      unique_id: attic_fan_curr
       state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: "{{ value_json['ZbReceived']['0xEC78']['RMSCurrent'] / 1000 }}" # Konwersja mA na A
       unit_of_measurement: "A"
       device_class: "current"
       
     - name: "Temperatura Ogrod"
+      unique_id: temp_garden
       state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: >
-        {% if value_json.ZbReceived['0xFC52'].Temperature is defined %}
-          {{ value_json.ZbReceived['0xFC52'].Temperature }}
+        {% set temp = value_json.ZbReceived['0xFC52'].Temperature | default(none) %}
+        {% if temp is not none %}
+          {{ temp }}
         {% else %}
-          {{ none }}
+          {{ this.state }}
         {% endif %}
       unit_of_measurement: "°C"
       device_class: "temperature"
@@ -83,12 +91,14 @@ mqtt:
       expire_after: 3600
 
     - name: "Wilgotność Ogrod"
+      unique_id: hum_garden
       state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: >
-        {% if value_json.ZbReceived['0xFC52'].Humidity is defined %}
-          {{ value_json.ZbReceived['0xFC52'].Humidity }}
+        {% set hum = value_json.ZbReceived['0xFC52'].Humidity | default(none) %}
+        {% if hum is not none %}
+          {{ hum }}
         {% else %}
-          {{ none }}
+          {{ this.state }}
         {% endif %}
       unit_of_measurement: "%"
       device_class: "humidity"
@@ -96,12 +106,14 @@ mqtt:
       expire_after: 3600 # Czas w sekundach (86400s = 24 godziny)
 
     - name: "Temperatura Taras"
+      unique_id: temp_taras
       state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: >
-        {% if value_json.ZbReceived['0x0B22'].Temperature is defined %}
-          {{ value_json.ZbReceived['0x0B22'].Temperature }}
+        {% set temp = value_json.ZbReceived['0x0B22'].Temperature | default(none) %}
+        {% if temp is not none %}
+          {{ temp }}
         {% else %}
-          {{ none }}
+          {{ this.state }}
         {% endif %}
       unit_of_measurement: "°C"
       device_class: "temperature"
@@ -109,12 +121,14 @@ mqtt:
       expire_after: 3600 # Czas w sekundach (86400s = 24 godziny)
 
     - name: "Wilgotność Taras"
+      unique_id: hum_taras
       state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: >
-        {% if value_json.ZbReceived['0x0B22'].Humidity is defined %}
-          {{ value_json.ZbReceived['0x0B22'].Humidity }}
+        {% set hum = value_json.ZbReceived['0x0B22'].Humidity | default(none) %}
+        {% if hum is not none %}
+          {{ hum }}
         {% else %}
-          {{ none }}
+          {{ this.state }}
         {% endif %}
       unit_of_measurement: "%"
       device_class: "humidity"
@@ -122,12 +136,14 @@ mqtt:
       expire_after: 3600 # Czas w sekundach (86400s = 24 godziny)
 
     - name: "Temperatura Strych"
+      unique_id: temp_attic
       state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: >
-        {% if value_json.ZbReceived['0x7B4B'].Temperature is defined %}
-          {{ value_json.ZbReceived['0x7B4B'].Temperature }}
+        {% set temp = value_json.ZbReceived['0x7B4B'].Temperature | default(none) %}
+        {% if temp is not none %}
+          {{ temp }}
         {% else %}
-          {{ none }}
+          {{ this.state }}
         {% endif %}
       unit_of_measurement: "°C"
       device_class: "temperature"
@@ -135,12 +151,14 @@ mqtt:
       expire_after: 3600 # Czas w sekundach (86400s = 24 godziny)
 
     - name: "Wilgotność Strych"
+      unique_id: hum_attic
       state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: >
-        {% if value_json.ZbReceived['0x7B4B'].Humidity is defined %}
-          {{ value_json.ZbReceived['0x7B4B'].Humidity }}
+        {% set hum = value_json.ZbReceived['0x7B4B'].Humidity | default(none) %}
+        {% if hum is not none %}
+          {{ hum }}
         {% else %}
-          {{ none }}
+          {{ this.state }}
         {% endif %}
       unit_of_measurement: "%"
       device_class: "humidity"
@@ -148,7 +166,7 @@ mqtt:
       expire_after: 3600 # Czas w sekundach (86400s = 24 godziny)
 
     - name: "Temperatura Piotr"
-      unique_id: temperatura_piotr
+      unique_id: temp_piotr
       state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: >
         {% set temp = value_json.ZbReceived['0x5560'].Temperature | default(none) %}
@@ -163,12 +181,14 @@ mqtt:
       expire_after: 3600
 
     - name: "Wilgotność Piotr"
+      unique_id: hum_piotr
       state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: >
-        {% if value_json.ZbReceived['0x5560'].Humidity is defined %}
-          {{ value_json.ZbReceived['0x5560'].Humidity }}
+        {% set hum = value_json.ZbReceived['0x5560'].Humidity | default(none) %}
+        {% if hum is not none %}
+          {{ hum }}
         {% else %}
-          {{ none }}
+          {{ this.state }}
         {% endif %}
       unit_of_measurement: "%"
       device_class: "humidity"
@@ -176,6 +196,7 @@ mqtt:
       expire_after: 3600 # Czas w sekundach (86400s = 24 godziny)
 
     - name: "Akcja Przycisk"
+      unique_id: action_button
       state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: >
         {% if value_json.ZbReceived['0xB3FC'] is defined %}
@@ -191,6 +212,7 @@ mqtt:
         {% endif %}
 
     - name: "Zawór Wody - Bateria"
+      unique_id: water_sw
       state_topic: "tele/tasmota_gateway/SENSOR"
       unit_of_measurement: "%"
       device_class: battery
@@ -229,7 +251,7 @@ mqtt:
       retain: false
       
     - name: "HEVO"
-      unique_id: "have_0xBF7E"
+      unique_id: "hevo_0xBF7E"
       command_topic: "cmnd/tasmota_gateway/ZbSend"
       state_topic: "stat/tasmota_gateway/POWER" # Dostosuj do swojego tematu
       payload_on: '{"Device":"0xBF7E","Send":{"Power":1}}'
@@ -246,6 +268,7 @@ mqtt:
       retain: false
       
     - name: "Relay bedroom"
+      unique_id: bedroom_0x38D7
       command_topic: "cmnd/tasmota_gateway/ZbSend"
       state_topic: "tele/tasmota_gateway/SENSOR"
       payload_on: '{"device":"0x38D7","send":{"Power":1}}'
@@ -260,6 +283,7 @@ mqtt:
       retain: false
 
     - name: "Relay Zosia"
+      unique_id: zosia_0x7679
       command_topic: "cmnd/tasmota_gateway/ZbSend"
       state_topic: "tele/tasmota_gateway/SENSOR"
       payload_on: '{"device":"0x7679","send":{"Power":1}}'
@@ -274,6 +298,7 @@ mqtt:
       retain: false
 
     - name: "Zawór Wody - Stan"
+      unique_id: water_sw_state
       command_topic: "cmnd/tasmota_gateway/ZbSend"
       state_topic: "tele/tasmota_gateway/SENSOR"
       payload_on: '{"device":"0xC227","send":{"Power":0}}'
