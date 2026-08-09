@@ -9,9 +9,17 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
-
+logger:
+  default: warning
+  logs:
+    homeassistant.components.mqtt: debug
+    homeassistant.components.mqtt.client: debug
 
 mqtt:
+  #broker: localhost
+  #port: 1884
+  # ... reszta konfiguracji (np. username, password) ...
+  #clean_session: true
   binary_sensor:
     - name: "Okno Sypialnia"
       state_topic: "tele/tasmota_gateway/SENSOR"
@@ -72,7 +80,7 @@ mqtt:
       unit_of_measurement: "°C"
       device_class: "temperature"
       state_class: "measurement"
-      expire_after: 3600 # Czas w sekundach (86400s = 24 godziny)
+      expire_after: 3600
 
     - name: "Wilgotność Ogrod"
       state_topic: "tele/tasmota_gateway/SENSOR"
@@ -142,15 +150,16 @@ mqtt:
     - name: "Temperatura Piotr"
       state_topic: "tele/tasmota_gateway/SENSOR"
       value_template: >
-        {% if value_json.ZbReceived['0x5560'].Temperature is defined %}
-          {{ value_json.ZbReceived['0x5560'].Temperature }}
+        {% set temp = value_json.ZbReceived['0x5560'].Temperature | default(none) %}
+        {% if temp is not none %}
+          {{ temp }}
         {% else %}
-          {{ none }}
+          {{ this.state }}
         {% endif %}
       unit_of_measurement: "°C"
       device_class: "temperature"
       state_class: "measurement"
-      expire_after: 3600 # Czas w sekundach (86400s = 24 godziny)
+      expire_after: 3600
 
     - name: "Wilgotność Piotr"
       state_topic: "tele/tasmota_gateway/SENSOR"

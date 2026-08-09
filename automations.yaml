@@ -141,3 +141,17 @@
       entity_id: switch.attic_fan
     data: {}
   mode: single
+- id: '1783010981537'
+  alias: Fountainn off
+  description: ''
+  triggers:
+  - trigger: time
+    at: '23:00:00'
+  conditions: []
+  actions:
+  - action: switch.turn_off
+    metadata: {}
+    target:
+      entity_id: switch.fountain
+    data: {}
+  mode: single
